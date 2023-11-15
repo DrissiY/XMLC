@@ -60,12 +60,39 @@ app.get('/', (req, res) => {
 });
 
 app.get('/uploads', (req, res) => {
-  fs.readdir('uploads', (err, files) => {
+  const uploadsFolderPath = path.join(__dirname, 'uploads');
+
+  fs.readdir(uploadsFolderPath, (err, files) => {
     if (err) {
       return res.status(500).send('Error reading uploads folder');
     }
-    res.json({ files });
+
+    const fileDetails = files.map((file) => {
+      const filePath = path.join(uploadsFolderPath, file);
+      const downloadLink = `/uploads/${encodeURIComponent(file)}`; // Create a download link
+
+      return {
+        name: file,
+        downloadLink,
+      };
+    });
+
+    res.json({ files: fileDetails });
   });
+});
+
+// Download route for individual files
+app.get('/uploads/:fileName', (req, res) => {
+  const fileName = req.params.fileName;
+  const filePath = path.join(__dirname, 'uploads', fileName);
+
+  // Set the headers for triggering a file download
+  res.setHeader('Content-Type', 'application/xml');
+  res.setHeader('Content-Disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
+
+  // Stream the file content to the response
+  const fileStream = fs.createReadStream(filePath);
+  fileStream.pipe(res);
 });
 
 // Start the server
