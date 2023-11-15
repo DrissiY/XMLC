@@ -59,6 +59,14 @@ app.get('/', (req, res) => {
   res.send('Hello');
 });
 
+app.get('/uploads', (req, res) => {
+  fs.readdir('uploads', (err, files) => {
+    if (err) {
+      return res.status(500).send('Error reading uploads folder');
+    }
+    res.json({ files });
+  });
+});
 
 // Start the server
 app.listen(port, () => {
