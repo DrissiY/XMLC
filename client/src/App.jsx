@@ -17,7 +17,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/upload', formData);
+      const response = await axios.post('https://convertor-p7fh.onrender.com/api/upload', formData);
       console.log(response.data);
       alert('File uploaded and converted successfully!');
     } catch (error) {
